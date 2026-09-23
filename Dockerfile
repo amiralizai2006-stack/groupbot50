@@ -12,7 +12,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . .
 
-RUN git clone --depth 1 https://codeberg.org/Lonami/grammers.git /app/grammers
+RUN git clone https://codeberg.org/Lonami/grammers.git /app/grammers \
+    && cd /app/grammers \
+    && git checkout 9fef0bae1e59b6138ae7777c783983934a80e129
+
+RUN cd /app/grammers && git apply /app/patches/grammers.patch
 
 RUN cargo build --release
 
