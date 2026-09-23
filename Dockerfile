@@ -38,4 +38,7 @@ WORKDIR /app
 
 COPY --from=builder /app/groupbot/target/release/groupbot /app/groupbot
 
+# کپی فایل مورد نیاز Voice Monitor
+COPY --from=builder /app/groupbot/voice_monitor.py /app/voice_monitor.py
+
 CMD ["/app/groupbot"]
