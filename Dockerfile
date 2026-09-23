@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     git \
     build-essential \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /app/groupbot
@@ -32,13 +33,14 @@ FROM debian:bookworm-slim
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl3 \
+    python3 \
+    ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY --from=builder /app/groupbot/target/release/groupbot /app/groupbot
-
-# کپی فایل مورد نیاز Voice Monitor
 COPY --from=builder /app/groupbot/voice_monitor.py /app/voice_monitor.py
+COPY --from=builder /app/groupbot/requirements-voice.txt /app/requirements-voice.txt
 
 CMD ["/app/groupbot"]
