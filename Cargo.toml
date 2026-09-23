@@ -19,7 +19,9 @@ hmac = "0.12"
 tower = { version = "0.5", default-features = false, features = ["limit"] }
 log = "0.4"
 simple_logger = { version = "5", default-features = false, features = ["colors"] }
-sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "postgres"] }
+
+sqlx = { version = "0.8", default-features = false, features = ["runtime-tokio", "tls-rustls", "postgres"] }
+
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 image = { version = "0.25.10", default-features = false, features = ["png", "jpeg", "webp", "gif"] }
