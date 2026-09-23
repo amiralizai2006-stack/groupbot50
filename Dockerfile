@@ -1,4 +1,4 @@
-FROM rust:1.88-bookworm AS builder
+FROM rust:1.89-bookworm AS builder
 
 WORKDIR /app
 
@@ -12,18 +12,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY . /app/groupbot
 
-# دریافت دقیق نسخه مورد نیاز grammers
 RUN git init /app/grammers \
     && cd /app/grammers \
     && git remote add origin https://github.com/Lonami/grammers.git \
     && git fetch --depth 1 origin 9fef0bae1e59b6138ae7777c783983934a80e129 \
     && git checkout FETCH_HEAD
 
-# اعمال patch مخصوص این پروژه
 RUN cd /app/grammers \
     && git apply /app/groupbot/patches/grammers.patch
 
-# ساخت ربات
 RUN cd /app/groupbot \
     && cargo build --release
 
