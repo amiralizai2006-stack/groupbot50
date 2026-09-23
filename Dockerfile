@@ -21,8 +21,11 @@ RUN git init /app/grammers \
 RUN cd /app/grammers \
     && git apply /app/groupbot/patches/grammers.patch
 
-RUN cd /app/groupbot \
-    && cargo build --release
+ENV CARGO_BUILD_JOBS=1
+ENV CARGO_INCREMENTAL=0
+ENV CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16
+
+RUN cd /app/groupbot && cargo build --release -j 1
 
 FROM debian:bookworm-slim
 
