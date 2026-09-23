@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     build-essential \
     python3 \
+    python3-pip \
     && rm -rf /var/lib/apt/lists/*
 
 COPY . /app/groupbot
@@ -28,12 +29,14 @@ ENV CARGO_PROFILE_RELEASE_CODEGEN_UNITS=16
 
 RUN cd /app/groupbot && cargo build --release -j 1
 
+
 FROM debian:bookworm-slim
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     libssl3 \
     python3 \
+    python3-pip \
     ffmpeg \
     && rm -rf /var/lib/apt/lists/*
 
@@ -42,5 +45,8 @@ WORKDIR /app
 COPY --from=builder /app/groupbot/target/release/groupbot /app/groupbot
 COPY --from=builder /app/groupbot/voice_monitor.py /app/voice_monitor.py
 COPY --from=builder /app/groupbot/requirements-voice.txt /app/requirements-voice.txt
+
+RUN pip3 install --no-cache-dir --break-system-packages \
+    -r /app/requirements-voice.txt
 
 CMD ["/app/groupbot"]
