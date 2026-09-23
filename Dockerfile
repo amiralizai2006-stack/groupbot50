@@ -10,15 +10,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-COPY . .
+# Project goes in /app/groupbot
+COPY . /app/groupbot
 
-RUN git clone https://codeberg.org/Lonami/grammers.git /app/grammers \
+# Cargo.toml expects grammers at ../grammers
+RUN git clone https://github.com/Lonami/grammers.git /app/grammers \
     && cd /app/grammers \
     && git checkout 9fef0bae1e59b6138ae7777c783983934a80e129
 
-RUN cd /app/grammers && git apply /app/patches/grammers.patch
+RUN cd /app/grammers \
+    && git apply /app/groupbot/patches/grammers.patch
 
-RUN cargo build --release
+RUN cd /app/groupbot \
+    && cargo build --release
 
 FROM debian:bookworm-slim
 
@@ -29,6 +33,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY --from=builder /app/target/release/groupbot /app/groupbot
+COPY --from=builder /app/groupbot/target/release/groupbot /app/groupbot
 
 CMD ["/app/groupbot"]
