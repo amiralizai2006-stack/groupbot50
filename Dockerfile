@@ -10,17 +10,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Project goes in /app/groupbot
 COPY . /app/groupbot
 
-# Cargo.toml expects grammers at ../grammers
-RUN git clone https://github.com/Lonami/grammers.git /app/grammers \
+# دریافت دقیق نسخه مورد نیاز grammers
+RUN git init /app/grammers \
     && cd /app/grammers \
-    && git checkout 9fef0bae1e59b6138ae7777c783983934a80e129
+    && git remote add origin https://github.com/Lonami/grammers.git \
+    && git fetch --depth 1 origin 9fef0bae1e59b6138ae7777c783983934a80e129 \
+    && git checkout FETCH_HEAD
 
+# اعمال patch مخصوص این پروژه
 RUN cd /app/grammers \
     && git apply /app/groupbot/patches/grammers.patch
 
+# ساخت ربات
 RUN cd /app/groupbot \
     && cargo build --release
 
